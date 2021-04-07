@@ -4,9 +4,9 @@ using System.Drawing;
 using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using Data;
+using Colorist.Domain;
 
-namespace ColorHelper {
+namespace Colorist.Download {
     public class BenjaminMooreColorHelper : IColorHelper {
         public string GetDataUrlPrefix() {
             return "https://www.benjaminmoore.com/en-us/color-overview/find-your-color/color";

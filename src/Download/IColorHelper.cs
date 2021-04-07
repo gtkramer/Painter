@@ -1,6 +1,6 @@
-using Data;
+using Colorist.Domain;
 
-namespace ColorHelper {
+namespace Colorist.Download {
     public interface IColorHelper {
         public string GetDataUrlPrefix();
         public string[] GetAllColorNumbers();
