@@ -24,7 +24,7 @@ namespace Painter.Download {
 
         private ColorSwatch GetColorSwatchFromJson(JsonElement json) {
             string name = WebUtility.HtmlDecode(json.GetProperty("name").GetString());
-            string number = json.GetProperty("brandKey").GetString() + json.GetProperty("colorNumber").GetString();
+            string number = json.GetProperty("brandKey").GetString() + " " + json.GetProperty("colorNumber").GetString();
             Color color = ColorTranslator.FromHtml(json.GetProperty("hex").GetString());
             double lrv = json.GetProperty("lrv").GetDouble();
 
