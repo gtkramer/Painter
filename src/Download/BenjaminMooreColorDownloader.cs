@@ -7,12 +7,24 @@ using System.Text.RegularExpressions;
 using Colorist.Domain;
 
 namespace Colorist.Download {
-    public class BenjaminMooreColorHelper : IColorHelper {
-        public string GetDataUrlPrefix() {
-            return "https://www.benjaminmoore.com/en-us/color-overview/find-your-color/color";
+    public class BenjaminMooreColorDownloader : ColorDownloader {
+        public override List<ColorSwatch> DownloadColors() {
+            List<ColorSwatch> colorSwatches = new List<ColorSwatch>();
+            using WebClient webClient = new WebClient();
+            string[] colorNumbers = GetAllColorNumbers();
+            foreach (string colorNumber in colorNumbers) {
+                string url = "https://www.benjaminmoore.com/en-us/color-overview/find-your-color/color/" + colorNumber;
+                string html = RetryDownloadString(webClient, url);
+                if (!string.IsNullOrEmpty(html)) {
+                    ColorSwatch colorSwatch = GetColorSwatchFromJson(GetJsonColorData(html));
+                    colorSwatches.Add(colorSwatch);
+                    Console.WriteLine("Downloaded " + colorSwatch.Name);
+                }
+            }
+            return colorSwatches;
         }
 
-        public string[] GetAllColorNumbers() {
+        private string[] GetAllColorNumbers() {
             string[] historical = GetHistoricalColorNumbers();
             string[] affinity = GetAffinityColorNumbers();
             string[] aura = GetAuraColorNumbers();
@@ -40,7 +52,7 @@ namespace Colorist.Download {
             return all;
         }
 
-        public string[] GetHistoricalColorNumbers() {
+        private string[] GetHistoricalColorNumbers() {
             string[] nums = new string[191];
             for (int i = 0; i != nums.Length; i++) {
                 nums[i] = "hc-" + (i + 1);
@@ -48,7 +60,7 @@ namespace Colorist.Download {
             return nums;
         }
 
-        public string[] GetAffinityColorNumbers() {
+        private string[] GetAffinityColorNumbers() {
             string[] nums = new string[144];
             for (int i = 0; i != nums.Length; i++) {
                 nums[i] = "af-" + ((i + 1) * 5);
@@ -56,7 +68,7 @@ namespace Colorist.Download {
             return nums;
         }
 
-        public string[] GetAuraColorNumbers() {
+        private string[] GetAuraColorNumbers() {
             string[] nums = new string[240];
             for (int i = 0; i != nums.Length; i++) {
                 nums[i] = "csp-" + ((i + 1) * 5);
@@ -64,7 +76,7 @@ namespace Colorist.Download {
             return nums;
         }
 
-        public string[] GetWilliamsburgColorNumbers() {
+        private string[] GetWilliamsburgColorNumbers() {
             string[] nums = new string[144];
             for (int i = 0; i != nums.Length; i++) {
                 nums[i] = "cw-" + ((i + 1) * 5);
@@ -72,7 +84,7 @@ namespace Colorist.Download {
             return nums;
         }
 
-        public string[] GetPreviewColorNumbers() {
+        private string[] GetPreviewColorNumbers() {
             List<string> nums = new List<string>(1232);
             for (int i = 0; i != 176; i++) {
                 for (int j = 0; j != 7; j++) {
@@ -82,7 +94,7 @@ namespace Colorist.Download {
             return nums.ToArray();
         }
 
-        public string[] GetClassicColorNumbers() {
+        private string[] GetClassicColorNumbers() {
             string[] nums = new string[1680];
             for (int i = 0; i != nums.Length; i++) {
                 int value = i + 1;
@@ -98,7 +110,7 @@ namespace Colorist.Download {
             return nums;
         }
 
-        public string[] GetOffWhiteColorNumbers() {
+        private string[] GetOffWhiteColorNumbers() {
             string[] nums = new string[152];
             for (int i = 0; i != nums.Length; i++) {
                 nums[i] = "oc-" + (i + 1);
@@ -106,7 +118,7 @@ namespace Colorist.Download {
             return nums;
         }
 
-        public string[] GetAmericaColorNumbers() {
+        private string[] GetAmericaColorNumbers() {
             string[] nums = new string[42];
             for (int i = 0; i != nums.Length; i++) {
                 nums[i] = "ac-" + (i + 1);
@@ -114,7 +126,7 @@ namespace Colorist.Download {
             return nums;
         }
 
-        public string[] GetDesignerColorNumbers() {
+        private string[] GetDesignerColorNumbers() {
             List<string> nums = new List<string>(231);
             for (int i = 0; i != 33; i++) {
                 int rangeStart = i * 30;
@@ -129,16 +141,22 @@ namespace Colorist.Download {
             return nums.ToArray();
         }
 
-        public ColorSwatch GetColorSwatchFromHtml(string html) {
-            JsonDocument colorJson = GetColorJson(html);
-            JsonElement colorDetailElem = colorJson.RootElement.GetProperty("page").GetProperty("colorDetail");
+        private JsonElement GetJsonColorData(string html) {
+            Regex regex = new Regex(@"\s*window.appData\s*=\s*\{.*\};\s*\n", RegexOptions.Compiled);
+            Match match = regex.Match(html);
+            string json = Regex.Replace(Regex.Replace(match.Value, @"\s*window.appData\s*=\s*", ""), @";\s*\n", "");
+            return JsonDocument.Parse(json).RootElement;
+        }
+
+        private ColorSwatch GetColorSwatchFromJson(JsonElement json) {
+            JsonElement colorDetailElem = json.GetProperty("page").GetProperty("colorDetail");
             JsonElement colorElem = colorDetailElem.GetProperty("color");
             string name = WebUtility.HtmlDecode(colorElem.GetProperty("name").GetString());
             string number = colorElem.GetProperty("number").GetString();
             Color color = ColorTranslator.FromHtml("#" + colorElem.GetProperty("hex").GetString());
-            float lrv = colorDetailElem.GetProperty("lrv").GetSingle();
+            double lrv = colorDetailElem.GetProperty("lrv").GetDouble();
 
-            ColorSwatch entity = new ColorSwatch{
+            return new ColorSwatch{
                 Name = name,
                 ColorNumbers = new List<ColorNumber>{
                     new ColorNumber{Number = number}
@@ -152,14 +170,6 @@ namespace Colorist.Download {
                 Lightness = color.GetBrightness(),
                 Lrv = lrv
             };
-            return entity;
-        }
-
-        private static JsonDocument GetColorJson(string htmlPage) {
-            Regex rx = new Regex(@"\s*window.appData\s*=\s*\{.*\};\s*\n", RegexOptions.Compiled);
-            Match m = rx.Match(htmlPage);
-            string j = Regex.Replace(Regex.Replace(m.Value, @"\s*window.appData\s*=\s*", ""), @";\s*\n", "");
-            return JsonDocument.Parse(j);
         }
     }
 }

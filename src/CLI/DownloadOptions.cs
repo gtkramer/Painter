@@ -8,5 +8,8 @@ namespace Colorist.CLI {
 
         [Option("benjamin-moore", Required = false, Default = false, HelpText = "Whether to download Benjamin Moore color data")]
         public bool HasBenjaminMoore { get; set; }
+
+        [Option("sherwin-williams", Required = false, Default = false, HelpText = "Whether to download Sherwin Williams color data")]
+        public bool HasSherwinWilliams { get; set; }
     }
 }

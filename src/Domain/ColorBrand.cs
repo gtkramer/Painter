@@ -1,5 +1,6 @@
 namespace Colorist.Domain {
     public enum ColorBrand {
-        BenjaminMoore
+        BenjaminMoore,
+        SherwinWilliams
     }
 }
