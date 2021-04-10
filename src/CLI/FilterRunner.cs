@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Painter.Data;
 using Painter.Domain;
 using Painter.Filter;
@@ -12,7 +13,7 @@ namespace Painter.CLI {
         public static void Execute(FilterOptions opts) {
             using ColorContext colorContext = new ColorContext(opts.DbFile);
 
-            List<ColorSwatch> colorSwatches = colorContext.ColorSwatches.ToList();
+            List<ColorSwatch> colorSwatches = colorContext.ColorSwatches.Include(s => s.ColorNumbers).ToList();
             List<ColorFilter> colorFilters = GetColorFilters();
             foreach (ColorFilter colorFilter in colorFilters) {
                 ColorSwatch[] filteredColorSwatches = colorFilter.FilterColors(colorSwatches).Where(x => ColorHslSelector(x, opts)).ToArray();
@@ -64,7 +65,7 @@ namespace Painter.CLI {
         private static void PrintFilteredColors(ColorFilter colorFilter, ColorSwatch[] colorSwatches) {
             Console.WriteLine(colorFilter.Name);
             foreach (ColorSwatch colorSwatch in colorSwatches) {
-                Console.WriteLine(colorSwatch.Hue.ToString("000.000") + ", " + colorSwatch.Saturation.ToString("0.000") + ", " + colorSwatch.Lightness.ToString("0.000") + ": " + colorSwatch.Name);
+                Console.WriteLine(colorSwatch);
             }
             Console.WriteLine();
         }
