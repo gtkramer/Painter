@@ -143,7 +143,7 @@ namespace Painter.Download {
 
         private JsonElement GetJsonColorData(string html) {
             Regex regex = new Regex(@"\s*window.appData\s*=\s*\{.*\};\s*\n", RegexOptions.Compiled);
-            Match match = regex.Match(html);
+            System.Text.RegularExpressions.Match match = regex.Match(html);
             string json = Regex.Replace(Regex.Replace(match.Value, @"\s*window.appData\s*=\s*", ""), @";\s*\n", "");
             return JsonDocument.Parse(json).RootElement;
         }
