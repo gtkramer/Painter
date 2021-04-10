@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading;
-using Colorist.Domain;
+using Painter.Domain;
 
-namespace Colorist.Download {
+namespace Painter.Download {
     public abstract class ColorDownloader {
         public abstract List<ColorSwatch> DownloadColors();
 

@@ -1,8 +1,8 @@
 using System.Drawing;
 using System.Drawing.Imaging;
-using Colorist.Domain;
+using Painter.Domain;
 
-namespace Colorist.Filter {
+namespace Painter.Filter {
     public class ColorWriter {
         private static int ImageWidth = 200;
         private static int ImageHeight = 200;

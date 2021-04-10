@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Colorist.Data;
-using Colorist.Domain;
-using Colorist.Download;
+using Painter.Data;
+using Painter.Domain;
+using Painter.Download;
 
-namespace Colorist.CLI {
+namespace Painter.CLI {
     public class DownloadRunner {
         public static void Execute(DownloadOptions opts) {
             List<ColorDownloader> colorDownloaders = new List<ColorDownloader>();

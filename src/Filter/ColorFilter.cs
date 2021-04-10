@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Colorist.Domain;
+using Painter.Domain;
 
-namespace Colorist.Filter {
+namespace Painter.Filter {
     public class ColorFilter {
         public string Name { get; }
         private int MinInclusiveHue;

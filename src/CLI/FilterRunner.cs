@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using Colorist.Data;
-using Colorist.Domain;
-using Colorist.Filter;
+using Painter.Data;
+using Painter.Domain;
+using Painter.Filter;
 
-namespace Colorist.CLI {
+namespace Painter.CLI {
     public class FilterRunner {
         public static void Execute(FilterOptions opts) {
             using ColorContext colorContext = new ColorContext(opts.DbFile);

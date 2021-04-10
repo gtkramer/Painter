@@ -1,6 +1,6 @@
 using CommandLine;
 
-namespace Colorist.CLI {
+namespace Painter.CLI {
     [Verb("download", isDefault: false, HelpText = "Download color data")]
     public class DownloadOptions {
         [Option("db", Required = false, Default = "colors.db", HelpText = "Path to a SQLite database file to which color data is downloaded")]

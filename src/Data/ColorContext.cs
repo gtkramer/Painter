@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Colorist.Domain;
+using Painter.Domain;
 
-namespace Colorist.Data {
+namespace Painter.Data {
     public class ColorContext : DbContext {
         private readonly string _dbFile;
         public DbSet<ColorSwatch> ColorSwatches { get; set; }

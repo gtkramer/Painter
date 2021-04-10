@@ -1,4 +1,4 @@
-namespace Colorist.Domain {
+namespace Painter.Domain {
     public class ColorNumber {
         public int Id { get; set; }
         public string Number { get; set; }

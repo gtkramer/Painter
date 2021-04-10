@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Colorist.Domain {
+namespace Painter.Domain {
     public class ColorSwatch {
         public int Id { get; set; }
         public ColorBrand Brand { get; set; }

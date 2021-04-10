@@ -1,7 +1,7 @@
-﻿using CommandLine;
-using Colorist.CLI;
+using CommandLine;
+using Painter.CLI;
 
-namespace Colorist {
+namespace Painter {
     public class Program {
         public static void Main(string[] args) {
             Parser.Default.ParseArguments<DownloadOptions, FilterOptions>(args)

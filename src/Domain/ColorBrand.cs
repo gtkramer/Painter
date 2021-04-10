@@ -1,4 +1,4 @@
-namespace Colorist.Domain {
+namespace Painter.Domain {
     public enum ColorBrand {
         BenjaminMoore,
         SherwinWilliams

@@ -4,9 +4,9 @@ using System.Drawing;
 using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using Colorist.Domain;
+using Painter.Domain;
 
-namespace Colorist.Download {
+namespace Painter.Download {
     public class BenjaminMooreColorDownloader : ColorDownloader {
         public override List<ColorSwatch> DownloadColors() {
             List<ColorSwatch> colorSwatches = new List<ColorSwatch>();
