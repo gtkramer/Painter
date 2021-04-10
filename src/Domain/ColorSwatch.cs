@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Painter.Utilities;
 
 namespace Painter.Domain {
     public class ColorSwatch {
@@ -16,7 +17,7 @@ namespace Painter.Domain {
         public double Lrv { get; set; }
 
         public override string ToString() {
-            return Hue.ToString("000.000") + ", " + Saturation.ToString("0.000") + ", " + Lightness.ToString("0.000") + ", " + Lrv.ToString("0.00") + ": " + Name + " (" + Brand + " " + string.Join(", ", ColorNumbers.Select(x => x.Number)) + ")";
+            return Hue.ToString("000.000") + ", " + Saturation.ToString("0.000") + ", " + Lightness.ToString("0.000") + ", " + Lrv.ToString("0.00") + ": " + Name + " (" + Brand.GetDescription() + " " + string.Join(", ", ColorNumbers.Select(x => x.Number)) + ")";
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Linq;
 using Painter.Domain;
+using Painter.Utilities;
 
 namespace Painter.Match {
     public class ColorMatch {
@@ -14,7 +15,7 @@ namespace Painter.Match {
         }
 
         public override string ToString() {
-            return (MatchError * 100).ToString("0.00") + "%: " + ColorSwatch.Brand + " " + string.Join(", ", ColorSwatch.ColorNumbers.Select(x => x.Number));
+            return (MatchError * 100).ToString("0.00") + "%: " + ColorSwatch.Brand.GetDescription() + " " + string.Join(", ", ColorSwatch.ColorNumbers.Select(x => x.Number));
         }
     }
 }
