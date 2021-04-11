@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Reflection;
 
-namespace Painter.Utilities {
+namespace Painter.Domain {
     public static class EnumExtensions {
         public static string GetDescription<T>(this T enumerationValue) where T : Enum {
             Type type = enumerationValue.GetType();

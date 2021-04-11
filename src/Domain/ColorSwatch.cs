@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Painter.Utilities;
 
 namespace Painter.Domain {
     public class ColorSwatch {

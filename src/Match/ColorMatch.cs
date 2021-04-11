@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using System.Linq;
 using Painter.Domain;
-using Painter.Utilities;
 
 namespace Painter.Match {
     public class ColorMatch {

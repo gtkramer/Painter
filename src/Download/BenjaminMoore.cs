@@ -5,7 +5,6 @@ using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Painter.Domain;
-using Painter.Utilities;
 
 namespace Painter.Download {
     public static class BenjaminMoore {

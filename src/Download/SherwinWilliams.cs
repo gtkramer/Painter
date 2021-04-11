@@ -6,7 +6,6 @@ using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Painter.Domain;
-using Painter.Utilities;
 
 namespace Painter.Download {
     public static class SherwinWilliams {
