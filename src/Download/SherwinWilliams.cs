@@ -6,10 +6,11 @@ using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Painter.Domain;
+using Painter.Utilities;
 
 namespace Painter.Download {
-    public static class SherwinWilliamsColorDownloader {
-        public static string JsonUrl = "https://prism-api.sherwin-williams.com/v1/colors/sherwin?lng=en-US&_corev=2.0.5";
+    public static class SherwinWilliams {
+        public static string Url = "https://prism-api.sherwin-williams.com/v1/colors/sherwin?lng=en-US&_corev=2.0.5";
 
         public static IEnumerable<ColorSwatch> GetColorSwatches(string json) {
             ConcurrentBag<ColorSwatch> colorSwatches = new ConcurrentBag<ColorSwatch>();
@@ -17,7 +18,7 @@ namespace Painter.Download {
             Parallel.ForEach(colorElements, colorElement => {
                 ColorSwatch colorSwatch = GetColorSwatchFromJson(colorElement);
                 colorSwatches.Add(colorSwatch);
-                Console.WriteLine("Downloaded " + colorSwatch.Name);
+                Console.WriteLine("Downloaded " + colorSwatch.Brand.GetDescription() + " " + colorSwatch.Name + " " + colorSwatch.ColorNumbers[0].Number);
             });
             return colorSwatches;
         }

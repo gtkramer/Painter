@@ -10,10 +10,10 @@ namespace Painter.CLI {
         public static void Execute(DownloadOptions opts) {
             using ColorDownloader colorDownloader = new ColorDownloader(new HttpClient());
             if (opts.HasBenjaminMoore) {
-                SaveColors(colorDownloader.ParallelDownloadColors(BenjaminMooreColorDownloader.GetUrls(), BenjaminMooreColorDownloader.GetColorSwatch), opts.DbFile);
+                SaveColors(colorDownloader.ParallelDownloadColors(BenjaminMoore.GetUrls(), BenjaminMoore.GetColorSwatch), opts.DbFile);
             }
             if (opts.HasSherwinWilliams) {
-                SaveColors(colorDownloader.DownloadColors(SherwinWilliamsColorDownloader.JsonUrl, SherwinWilliamsColorDownloader.GetColorSwatches), opts.DbFile);
+                SaveColors(colorDownloader.DownloadColors(SherwinWilliams.Url, SherwinWilliams.GetColorSwatches), opts.DbFile);
             }
         }
 

@@ -8,12 +8,8 @@ using Painter.Domain;
 using Painter.Utilities;
 
 namespace Painter.Download {
-    public static class BenjaminMooreColorDownloader {
+    public static class BenjaminMoore {
         private static string UrlPrefix = "https://www.benjaminmoore.com/en-us/color-overview/find-your-color/color/";
-
-        public static ColorSwatch GetColorSwatch(string html) {
-            return GetColorSwatchFromJson(GetJsonColorData(html));
-        }
 
         public static IEnumerable<string> GetUrls() {
             string[] historical = GetHistoricalColorUrls();
@@ -132,6 +128,12 @@ namespace Painter.Download {
             return nums.ToArray();
         }
 
+        public static ColorSwatch GetColorSwatch(string html) {
+            ColorSwatch colorSwatch = GetColorSwatchFromJson(GetJsonColorData(html));
+            Console.WriteLine("Downloaded " + colorSwatch.Brand.GetDescription() + " " + colorSwatch.Name + " " + colorSwatch.ColorNumbers[0].Number);
+            return colorSwatch;
+        }
+
         private static JsonElement GetJsonColorData(string html) {
             Regex regex = new Regex(@"\s*window.appData\s*=\s*\{.*\};\s*\n", RegexOptions.Compiled);
             System.Text.RegularExpressions.Match match = regex.Match(html);
@@ -147,7 +149,7 @@ namespace Painter.Download {
             Color color = ColorTranslator.FromHtml("#" + colorElem.GetProperty("hex").GetString());
             double lrv = colorDetailElem.GetProperty("lrv").GetDouble();
 
-            ColorSwatch colorSwatch = new ColorSwatch{
+            return new ColorSwatch{
                 Name = name,
                 ColorNumbers = new List<ColorNumber>{
                     new ColorNumber{Number = number}
@@ -161,8 +163,6 @@ namespace Painter.Download {
                 Lightness = color.GetBrightness(),
                 Lrv = lrv
             };
-            Console.WriteLine("Downloaded " + colorSwatch.Brand.GetDescription() + " " + colorSwatch.Name + " " + colorSwatch.ColorNumbers[0].Number);
-            return colorSwatch;
         }
     }
 }
