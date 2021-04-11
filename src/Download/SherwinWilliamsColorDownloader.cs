@@ -9,9 +9,7 @@ using Painter.Domain;
 
 namespace Painter.Download {
     public static class SherwinWilliamsColorDownloader {
-        public static string GetUrl() {
-            return "https://prism-api.sherwin-williams.com/v1/colors/sherwin?lng=en-US&_corev=2.0.5";
-        }
+        public static string JsonUrl = "https://prism-api.sherwin-williams.com/v1/colors/sherwin?lng=en-US&_corev=2.0.5";
 
         public static IEnumerable<ColorSwatch> GetColorSwatches(string json) {
             ConcurrentBag<ColorSwatch> colorSwatches = new ConcurrentBag<ColorSwatch>();

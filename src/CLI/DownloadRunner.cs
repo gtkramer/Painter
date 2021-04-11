@@ -13,7 +13,7 @@ namespace Painter.CLI {
                 SaveColors(colorDownloader.ParallelDownloadColors(BenjaminMooreColorDownloader.GetUrls(), BenjaminMooreColorDownloader.GetColorSwatch), opts.DbFile);
             }
             if (opts.HasSherwinWilliams) {
-                SaveColors(colorDownloader.DownloadColors(SherwinWilliamsColorDownloader.GetUrl(), SherwinWilliamsColorDownloader.GetColorSwatches), opts.DbFile);
+                SaveColors(colorDownloader.DownloadColors(SherwinWilliamsColorDownloader.JsonUrl, SherwinWilliamsColorDownloader.GetColorSwatches), opts.DbFile);
             }
         }
 
