@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using Painter.Data;
 using Painter.Domain;
 using Painter.Download;
@@ -7,7 +8,7 @@ using Painter.Download;
 namespace Painter.CLI {
     public class DownloadRunner {
         public static void Execute(DownloadOptions opts) {
-            using ColorDownloader colorDownloader = new ColorDownloader();
+            using ColorDownloader colorDownloader = new ColorDownloader(new HttpClient());
             if (opts.HasBenjaminMoore) {
                 SaveColors(colorDownloader.ParallelDownloadColors(BenjaminMooreColorDownloader.GetUrls(), BenjaminMooreColorDownloader.GetColorSwatch), opts.DbFile);
             }

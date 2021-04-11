@@ -6,21 +6,31 @@ using System.Threading.Tasks;
 using Painter.Domain;
 
 namespace Painter.Download {
-    public class ColorDownloader : HttpClient {
+    public sealed class ColorDownloader : IDisposable {
+        private readonly HttpClient _client;
+
+        public ColorDownloader(HttpClient client) {
+            _client = client;
+        }
+
         public IEnumerable<ColorSwatch> ParallelDownloadColors(IEnumerable<string> urls, Func<string, ColorSwatch> action) {
             ConcurrentBag<ColorSwatch> colorSwatches = new ConcurrentBag<ColorSwatch>();
             Parallel.ForEach(urls,
                 // Limit parallel downloads to not overwhelm a service and cause throttling
                 new ParallelOptions {MaxDegreeOfParallelism = 4},
                 url => {
-                    colorSwatches.Add(action(GetStringAsync(url).Result));
+                    colorSwatches.Add(action(_client.GetStringAsync(url).Result));
                 }
             );
             return colorSwatches;
         }
 
         public IEnumerable<ColorSwatch> DownloadColors(string url, Func<string, IEnumerable<ColorSwatch>> action) {
-            return action(GetStringAsync(url).Result);
+            return action(_client.GetStringAsync(url).Result);
+        }
+
+        public void Dispose() {
+            _client.Dispose();
         }
     }
 }
