@@ -7,23 +7,16 @@ using Painter.Download;
 namespace Painter.CLI {
     public class DownloadRunner {
         public static void Execute(DownloadOptions opts) {
-            List<ColorDownloader> colorDownloaders = new List<ColorDownloader>();
+            using ColorDownloader colorDownloader = new ColorDownloader();
             if (opts.HasBenjaminMoore) {
-                colorDownloaders.Add(new BenjaminMooreColorDownloader());
+                SaveColors(colorDownloader.ParallelDownloadColors(BenjaminMooreColorDownloader.GetUrls(), BenjaminMooreColorDownloader.GetColorSwatch), opts.DbFile);
             }
             if (opts.HasSherwinWilliams) {
-                colorDownloaders.Add(new SherwinWilliamsColorDownloader());
-            }
-            if (colorDownloaders.Count == 0) {
-                Console.WriteLine("No color brands selected to download color data");
-                return;
-            }
-            foreach (ColorDownloader colorDownloader in colorDownloaders) {
-                SaveColors(colorDownloader.DownloadColors(), opts.DbFile);
+                SaveColors(colorDownloader.DownloadColors(SherwinWilliamsColorDownloader.GetUrl(), SherwinWilliamsColorDownloader.GetColorSwatches), opts.DbFile);
             }
         }
 
-        private static void SaveColors(List<ColorSwatch> colorSwatches, string dbFile) {
+        private static void SaveColors(IEnumerable<ColorSwatch> colorSwatches, string dbFile) {
             using ColorContext colorContext = new ColorContext(dbFile);
             colorContext.Database.EnsureCreated();
             foreach (ColorSwatch colorSwatch in colorSwatches) {

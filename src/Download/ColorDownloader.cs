@@ -1,24 +1,26 @@
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Net;
-using System.Threading;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Painter.Domain;
 
 namespace Painter.Download {
-    public abstract class ColorDownloader {
-        public abstract List<ColorSwatch> DownloadColors();
+    public class ColorDownloader : HttpClient {
+        public IEnumerable<ColorSwatch> ParallelDownloadColors(IEnumerable<string> urls, Func<string, ColorSwatch> action) {
+            ConcurrentBag<ColorSwatch> colorSwatches = new ConcurrentBag<ColorSwatch>();
+            Parallel.ForEach(urls,
+                // Limit parallel downloads to not overwhelm a service and cause throttling
+                new ParallelOptions {MaxDegreeOfParallelism = 4},
+                url => {
+                    colorSwatches.Add(action(GetStringAsync(url).Result));
+                }
+            );
+            return colorSwatches;
+        }
 
-        protected string RetryDownloadString(WebClient webClient, string url) {
-            string str = "";
-            for (int i = 0; i != 3; i++) {
-                try {
-                    str = webClient.DownloadString(url);
-                    break;
-                }
-                catch {
-                    Thread.Sleep(10000);
-                }
-            }
-            return str;
+        public IEnumerable<ColorSwatch> DownloadColors(string url, Func<string, IEnumerable<ColorSwatch>> action) {
+            return action(GetStringAsync(url).Result);
         }
     }
 }

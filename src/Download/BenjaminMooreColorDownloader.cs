@@ -5,35 +5,26 @@ using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Painter.Domain;
+using Painter.Utilities;
 
 namespace Painter.Download {
-    public class BenjaminMooreColorDownloader : ColorDownloader {
-        public override List<ColorSwatch> DownloadColors() {
-            List<ColorSwatch> colorSwatches = new List<ColorSwatch>();
-            using WebClient webClient = new WebClient();
-            string[] colorNumbers = GetAllColorNumbers();
-            foreach (string colorNumber in colorNumbers) {
-                string url = "https://www.benjaminmoore.com/en-us/color-overview/find-your-color/color/" + colorNumber;
-                string html = RetryDownloadString(webClient, url);
-                if (!string.IsNullOrEmpty(html)) {
-                    ColorSwatch colorSwatch = GetColorSwatchFromJson(GetJsonColorData(html));
-                    colorSwatches.Add(colorSwatch);
-                    Console.WriteLine("Downloaded " + colorSwatch.Name);
-                }
-            }
-            return colorSwatches;
+    public static class BenjaminMooreColorDownloader {
+        private static string UrlPrefix = "https://www.benjaminmoore.com/en-us/color-overview/find-your-color/color/";
+
+        public static ColorSwatch GetColorSwatch(string html) {
+            return GetColorSwatchFromJson(GetJsonColorData(html));
         }
 
-        private string[] GetAllColorNumbers() {
-            string[] historical = GetHistoricalColorNumbers();
-            string[] affinity = GetAffinityColorNumbers();
-            string[] aura = GetAuraColorNumbers();
-            string[] williamsburg = GetWilliamsburgColorNumbers();
-            string[] preview = GetPreviewColorNumbers();
-            string[] classic = GetClassicColorNumbers();
-            string[] offWhite = GetOffWhiteColorNumbers();
-            string[] america = GetAmericaColorNumbers();
-            string[] designer = GetDesignerColorNumbers();
+        public static IEnumerable<string> GetUrls() {
+            string[] historical = GetHistoricalColorUrls();
+            string[] affinity = GetAffinityColorUrls();
+            string[] aura = GetAuraColorUrls();
+            string[] williamsburg = GetWilliamsburgColorUrls();
+            string[] preview = GetPreviewColorUrls();
+            string[] classic = GetClassicColorUrls();
+            string[] offWhite = GetOffWhiteColorUrls();
+            string[] america = GetAmericaColorUrls();
+            string[] designer = GetDesignerColorUrls();
 
             List<string[]> collections = new List<string[]>{historical, affinity, aura, williamsburg, preview, classic, offWhite, america, designer};
 
@@ -52,103 +43,103 @@ namespace Painter.Download {
             return all;
         }
 
-        private string[] GetHistoricalColorNumbers() {
+        private static string[] GetHistoricalColorUrls() {
             string[] nums = new string[191];
             for (int i = 0; i != nums.Length; i++) {
-                nums[i] = "hc-" + (i + 1);
+                nums[i] = UrlPrefix + "hc-" + (i + 1);
             }
             return nums;
         }
 
-        private string[] GetAffinityColorNumbers() {
+        private static string[] GetAffinityColorUrls() {
             string[] nums = new string[144];
             for (int i = 0; i != nums.Length; i++) {
-                nums[i] = "af-" + ((i + 1) * 5);
+                nums[i] = UrlPrefix + "af-" + ((i + 1) * 5);
             }
             return nums;
         }
 
-        private string[] GetAuraColorNumbers() {
+        private static string[] GetAuraColorUrls() {
             string[] nums = new string[240];
             for (int i = 0; i != nums.Length; i++) {
-                nums[i] = "csp-" + ((i + 1) * 5);
+                nums[i] = UrlPrefix + "csp-" + ((i + 1) * 5);
             }
             return nums;
         }
 
-        private string[] GetWilliamsburgColorNumbers() {
+        private static string[] GetWilliamsburgColorUrls() {
             string[] nums = new string[144];
             for (int i = 0; i != nums.Length; i++) {
-                nums[i] = "cw-" + ((i + 1) * 5);
+                nums[i] = UrlPrefix + "cw-" + ((i + 1) * 5);
             }
             return nums;
         }
 
-        private string[] GetPreviewColorNumbers() {
+        private static string[] GetPreviewColorUrls() {
             List<string> nums = new List<string>(1232);
             for (int i = 0; i != 176; i++) {
                 for (int j = 0; j != 7; j++) {
-                    nums.Add((2000 + i) + "-" + ((j + 1) * 10));
+                    nums.Add(UrlPrefix + (2000 + i) + "-" + ((j + 1) * 10));
                 }
             }
             return nums.ToArray();
         }
 
-        private string[] GetClassicColorNumbers() {
+        private static string[] GetClassicColorUrls() {
             string[] nums = new string[1680];
             for (int i = 0; i != nums.Length; i++) {
                 int value = i + 1;
                 int numZeros = 3 - value.ToString().Length;
                 if (numZeros > 0) {
                     string padding = new string('0', numZeros);
-                    nums[i] = padding + value;
+                    nums[i] = UrlPrefix + padding + value;
                 }
                 else {
-                    nums[i] = value.ToString();
+                    nums[i] = UrlPrefix + value.ToString();
                 }
             }
             return nums;
         }
 
-        private string[] GetOffWhiteColorNumbers() {
+        private static string[] GetOffWhiteColorUrls() {
             string[] nums = new string[152];
             for (int i = 0; i != nums.Length; i++) {
-                nums[i] = "oc-" + (i + 1);
+                nums[i] = UrlPrefix + "oc-" + (i + 1);
             }
             return nums;
         }
 
-        private string[] GetAmericaColorNumbers() {
+        private static string[] GetAmericaColorUrls() {
             string[] nums = new string[42];
             for (int i = 0; i != nums.Length; i++) {
-                nums[i] = "ac-" + (i + 1);
+                nums[i] = UrlPrefix + "ac-" + (i + 1);
             }
             return nums;
         }
 
-        private string[] GetDesignerColorNumbers() {
+        private static string[] GetDesignerColorUrls() {
             List<string> nums = new List<string>(231);
             for (int i = 0; i != 33; i++) {
                 int rangeStart = i * 30;
-                nums.Add("cc-" + (rangeStart + 2));
-                nums.Add("cc-" + (rangeStart + 4));
-                nums.Add("cc-" + (rangeStart + 6));
-                nums.Add("cc-" + (rangeStart + 8));
-                nums.Add("cc-" + (rangeStart + 10));
-                nums.Add("cc-" + (rangeStart + 20));
-                nums.Add("cc-" + (rangeStart + 30));
+                nums.Add(UrlPrefix + "cc-" + (rangeStart + 2));
+                nums.Add(UrlPrefix + "cc-" + (rangeStart + 4));
+                nums.Add(UrlPrefix + "cc-" + (rangeStart + 6));
+                nums.Add(UrlPrefix + "cc-" + (rangeStart + 8));
+                nums.Add(UrlPrefix + "cc-" + (rangeStart + 10));
+                nums.Add(UrlPrefix + "cc-" + (rangeStart + 20));
+                nums.Add(UrlPrefix + "cc-" + (rangeStart + 30));
             }
             return nums.ToArray();
         }
 
-        private JsonElement GetJsonColorData(string html) {
+        private static JsonElement GetJsonColorData(string html) {
             Regex regex = new Regex(@"\s*window.appData\s*=\s*\{.*\};\s*\n", RegexOptions.Compiled);
             System.Text.RegularExpressions.Match match = regex.Match(html);
             string json = Regex.Replace(Regex.Replace(match.Value, @"\s*window.appData\s*=\s*", ""), @";\s*\n", "");
             return JsonDocument.Parse(json).RootElement;
         }
 
-        private ColorSwatch GetColorSwatchFromJson(JsonElement json) {
+        private static ColorSwatch GetColorSwatchFromJson(JsonElement json) {
             JsonElement colorDetailElem = json.GetProperty("page").GetProperty("colorDetail");
             JsonElement colorElem = colorDetailElem.GetProperty("color");
             string name = WebUtility.HtmlDecode(colorElem.GetProperty("name").GetString());
@@ -156,7 +147,7 @@ namespace Painter.Download {
             Color color = ColorTranslator.FromHtml("#" + colorElem.GetProperty("hex").GetString());
             double lrv = colorDetailElem.GetProperty("lrv").GetDouble();
 
-            return new ColorSwatch{
+            ColorSwatch colorSwatch = new ColorSwatch{
                 Name = name,
                 ColorNumbers = new List<ColorNumber>{
                     new ColorNumber{Number = number}
@@ -170,6 +161,8 @@ namespace Painter.Download {
                 Lightness = color.GetBrightness(),
                 Lrv = lrv
             };
+            Console.WriteLine("Downloaded " + colorSwatch.Brand.GetDescription() + " " + colorSwatch.Name + " " + colorSwatch.ColorNumbers[0].Number);
+            return colorSwatch;
         }
     }
 }
