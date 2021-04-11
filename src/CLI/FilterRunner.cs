@@ -17,13 +17,12 @@ namespace Painter.CLI {
             List<ColorFilter> colorFilters = GetColorFilters();
             foreach (ColorFilter colorFilter in colorFilters) {
                 ColorSwatch[] filteredColorSwatches = colorFilter.FilterColors(colorSwatches).Where(x => ColorHslSelector(x, opts)).ToArray();
-                string fileName = colorFilter.Name + ".png";
+                string fileName = colorFilter + ".png";
                 if (File.Exists(fileName)) {
                     File.Delete(fileName);
                 }
                 if (filteredColorSwatches.Length != 0) {
-                    ColorWriter colorWriter = new ColorWriter(fileName, ImageFormat.Png);
-                    colorWriter.WriteColors(filteredColorSwatches);
+                    ColorWriter.WriteColors(filteredColorSwatches, fileName);
                     PrintFilteredColors(colorFilter, filteredColorSwatches);
                 }
             }
@@ -63,7 +62,7 @@ namespace Painter.CLI {
         }
 
         private static void PrintFilteredColors(ColorFilter colorFilter, ColorSwatch[] colorSwatches) {
-            Console.WriteLine(colorFilter.Name);
+            Console.WriteLine(colorFilter);
             foreach (ColorSwatch colorSwatch in colorSwatches) {
                 Console.WriteLine(colorSwatch);
             }

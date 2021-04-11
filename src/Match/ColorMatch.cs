@@ -4,7 +4,7 @@ using System.Linq;
 using Painter.Domain;
 
 namespace Painter.Match {
-    public class ColorMatch {
+    public struct ColorMatch {
         public double MatchError { get; }
         public ColorSwatch ColorSwatch { get; }
 

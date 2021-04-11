@@ -5,20 +5,20 @@ using Painter.Domain;
 
 namespace Painter.Filter {
     public class ColorFilter {
-        public string Name { get; }
-        private int MinInclusiveHue;
-        private int MaxExclusiveHue;
-        private Func<ColorSwatch, int, int, bool> Selector;
+        private string _name;
+        private int _minInclusiveHue;
+        private int _maxExclusiveHue;
+        private Func<ColorSwatch, int, int, bool> _selector;
 
         public ColorFilter(string name, int minInclusiveHue, int maxExclusiveHue, Func<ColorSwatch, int, int, bool> selector) {
-            Name = name;
-            MinInclusiveHue = minInclusiveHue;
-            MaxExclusiveHue = maxExclusiveHue;
-            Selector = selector;
+            _name = name;
+            _minInclusiveHue = minInclusiveHue;
+            _maxExclusiveHue = maxExclusiveHue;
+            _selector = selector;
         }
 
         public IEnumerable<ColorSwatch> FilterColors(IEnumerable<ColorSwatch> colorSwatches) {
-            return colorSwatches.Where(x => Selector(x, MinInclusiveHue, MaxExclusiveHue));
+            return colorSwatches.Where(x => _selector(x, _minInclusiveHue, _maxExclusiveHue));
         }
 
         public static bool ColorHueContiguousSelector(ColorSwatch colorSwatch, int minInclusiveHue, int maxExclusiveHue) {
@@ -32,7 +32,7 @@ namespace Painter.Filter {
         }
 
         public override string ToString() {
-            return Name;
+            return _name;
         }
     }
 }

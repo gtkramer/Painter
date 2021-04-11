@@ -8,7 +8,7 @@ using Painter.Domain;
 
 namespace Painter.Download {
     public static class BenjaminMoore {
-        private static string UrlPrefix = "https://www.benjaminmoore.com/en-us/color-overview/find-your-color/color/";
+        private static string _urlPrefix = "https://www.benjaminmoore.com/en-us/color-overview/find-your-color/color/";
 
         public static IEnumerable<string> GetUrls() {
             string[] historical = GetHistoricalColorUrls();
@@ -41,7 +41,7 @@ namespace Painter.Download {
         private static string[] GetHistoricalColorUrls() {
             string[] nums = new string[191];
             for (int i = 0; i != nums.Length; i++) {
-                nums[i] = UrlPrefix + "hc-" + (i + 1);
+                nums[i] = _urlPrefix + "hc-" + (i + 1);
             }
             return nums;
         }
@@ -49,7 +49,7 @@ namespace Painter.Download {
         private static string[] GetAffinityColorUrls() {
             string[] nums = new string[144];
             for (int i = 0; i != nums.Length; i++) {
-                nums[i] = UrlPrefix + "af-" + ((i + 1) * 5);
+                nums[i] = _urlPrefix + "af-" + ((i + 1) * 5);
             }
             return nums;
         }
@@ -57,7 +57,7 @@ namespace Painter.Download {
         private static string[] GetAuraColorUrls() {
             string[] nums = new string[240];
             for (int i = 0; i != nums.Length; i++) {
-                nums[i] = UrlPrefix + "csp-" + ((i + 1) * 5);
+                nums[i] = _urlPrefix + "csp-" + ((i + 1) * 5);
             }
             return nums;
         }
@@ -65,7 +65,7 @@ namespace Painter.Download {
         private static string[] GetWilliamsburgColorUrls() {
             string[] nums = new string[144];
             for (int i = 0; i != nums.Length; i++) {
-                nums[i] = UrlPrefix + "cw-" + ((i + 1) * 5);
+                nums[i] = _urlPrefix + "cw-" + ((i + 1) * 5);
             }
             return nums;
         }
@@ -74,7 +74,7 @@ namespace Painter.Download {
             List<string> nums = new List<string>(1232);
             for (int i = 0; i != 176; i++) {
                 for (int j = 0; j != 7; j++) {
-                    nums.Add(UrlPrefix + (2000 + i) + "-" + ((j + 1) * 10));
+                    nums.Add(_urlPrefix + (2000 + i) + "-" + ((j + 1) * 10));
                 }
             }
             return nums.ToArray();
@@ -87,10 +87,10 @@ namespace Painter.Download {
                 int numZeros = 3 - value.ToString().Length;
                 if (numZeros > 0) {
                     string padding = new string('0', numZeros);
-                    nums[i] = UrlPrefix + padding + value;
+                    nums[i] = _urlPrefix + padding + value;
                 }
                 else {
-                    nums[i] = UrlPrefix + value.ToString();
+                    nums[i] = _urlPrefix + value.ToString();
                 }
             }
             return nums;
@@ -99,7 +99,7 @@ namespace Painter.Download {
         private static string[] GetOffWhiteColorUrls() {
             string[] nums = new string[152];
             for (int i = 0; i != nums.Length; i++) {
-                nums[i] = UrlPrefix + "oc-" + (i + 1);
+                nums[i] = _urlPrefix + "oc-" + (i + 1);
             }
             return nums;
         }
@@ -107,7 +107,7 @@ namespace Painter.Download {
         private static string[] GetAmericaColorUrls() {
             string[] nums = new string[42];
             for (int i = 0; i != nums.Length; i++) {
-                nums[i] = UrlPrefix + "ac-" + (i + 1);
+                nums[i] = _urlPrefix + "ac-" + (i + 1);
             }
             return nums;
         }
@@ -116,13 +116,13 @@ namespace Painter.Download {
             List<string> nums = new List<string>(231);
             for (int i = 0; i != 33; i++) {
                 int rangeStart = i * 30;
-                nums.Add(UrlPrefix + "cc-" + (rangeStart + 2));
-                nums.Add(UrlPrefix + "cc-" + (rangeStart + 4));
-                nums.Add(UrlPrefix + "cc-" + (rangeStart + 6));
-                nums.Add(UrlPrefix + "cc-" + (rangeStart + 8));
-                nums.Add(UrlPrefix + "cc-" + (rangeStart + 10));
-                nums.Add(UrlPrefix + "cc-" + (rangeStart + 20));
-                nums.Add(UrlPrefix + "cc-" + (rangeStart + 30));
+                nums.Add(_urlPrefix + "cc-" + (rangeStart + 2));
+                nums.Add(_urlPrefix + "cc-" + (rangeStart + 4));
+                nums.Add(_urlPrefix + "cc-" + (rangeStart + 6));
+                nums.Add(_urlPrefix + "cc-" + (rangeStart + 8));
+                nums.Add(_urlPrefix + "cc-" + (rangeStart + 10));
+                nums.Add(_urlPrefix + "cc-" + (rangeStart + 20));
+                nums.Add(_urlPrefix + "cc-" + (rangeStart + 30));
             }
             return nums.ToArray();
         }

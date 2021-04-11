@@ -3,30 +3,26 @@ using System.Drawing.Imaging;
 using Painter.Domain;
 
 namespace Painter.Filter {
-    public class ColorWriter {
-        private static int ImageWidth = 200;
-        private static int ImageHeight = 200;
+    public static class ColorWriter {
+        public static int UnitWidth = 200;
+        public static int UnitHeight = 200;
 
-        private string FileName;
-        private ImageFormat FileFormat;
-
-        public ColorWriter(string fileName, ImageFormat fileFormat) {
-            FileName = fileName;
-            FileFormat = fileFormat;
+        public static void WriteColors(ColorSwatch[] colorSwatches, string filePath) {
+            WriteColors(colorSwatches, filePath, ImageFormat.Png);
         }
 
-        public void WriteColors(ColorSwatch[] colorSwatches) {
-            Bitmap image = new Bitmap(ImageWidth, ImageHeight * colorSwatches.Length);
+        public static void WriteColors(ColorSwatch[] colorSwatches, string filePath, ImageFormat fileFormat) {
+            Bitmap image = new Bitmap(UnitWidth, UnitHeight * colorSwatches.Length);
             for (int i = 0; i != colorSwatches.Length; i++) {
                 ColorSwatch colorSwatch = colorSwatches[i];
                 Color color = Color.FromArgb(colorSwatch.Red, colorSwatch.Green, colorSwatch.Blue);
-                for (int x = 0; x != ImageWidth; x++) {
-                    for (int y = ImageHeight * i; y != ImageHeight * (i + 1); y++) {
+                for (int x = 0; x != UnitWidth; x++) {
+                    for (int y = UnitHeight * i; y != UnitHeight * (i + 1); y++) {
                         image.SetPixel(x, y, color);
                     }
                 }
             }
-            image.Save(FileName, FileFormat);
+            image.Save(filePath, fileFormat);
         }
     }
 }
