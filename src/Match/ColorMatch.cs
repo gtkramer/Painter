@@ -14,7 +14,7 @@ namespace Painter.Match {
         }
 
         public override string ToString() {
-            return (MatchError * 100).ToString("0.00") + "%: " + ColorSwatch.Brand.GetDescription() + " " + string.Join(", ", ColorSwatch.ColorNumbers.Select(x => x.Number));
+            return (MatchError * 100).ToString("0.00") + "%: " + ColorSwatch.Brand.GetDescription() + " " + ColorSwatch.Name + " " + string.Join(", ", ColorSwatch.ColorNumbers.Select(x => x.Number));
         }
     }
 }
