@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -17,12 +16,7 @@ namespace Painter.CLI {
             List<ColorFilter> colorFilters = GetColorFilters();
             foreach (ColorFilter colorFilter in colorFilters) {
                 ColorSwatch[] filteredColorSwatches = colorFilter.FilterColors(colorSwatches).Where(x => ColorHslSelector(x, opts)).ToArray();
-                string fileName = colorFilter + ".png";
-                if (File.Exists(fileName)) {
-                    File.Delete(fileName);
-                }
                 if (filteredColorSwatches.Length != 0) {
-                    ColorWriter.WriteColors(filteredColorSwatches, fileName);
                     PrintFilteredColors(colorFilter, filteredColorSwatches);
                 }
             }
