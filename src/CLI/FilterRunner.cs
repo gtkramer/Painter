@@ -15,7 +15,7 @@ namespace Painter.CLI {
             List<ColorSwatch> colorSwatches = colorContext.ColorSwatches.Include(s => s.ColorNumbers).ToList();
             List<ColorFilter> colorFilters = GetColorFilters();
             foreach (ColorFilter colorFilter in colorFilters) {
-                ColorSwatch[] filteredColorSwatches = colorFilter.FilterColors(colorSwatches).Where(x => ColorHslSelector(x, opts)).ToArray();
+                ColorSwatch[] filteredColorSwatches = colorFilter.FilterColors(colorSwatches).Where(x => ColorMeetsCriteria(x, opts)).ToArray();
                 if (filteredColorSwatches.Length != 0) {
                     PrintFilteredColors(colorFilter, filteredColorSwatches);
                 }
@@ -43,16 +43,18 @@ namespace Painter.CLI {
             return colorFilters;
         }
 
-        private static bool ColorHslSelector(ColorSwatch colorSwatch, FilterOptions opts) {
+        private static bool ColorMeetsCriteria(ColorSwatch colorSwatch, FilterOptions opts) {
             double hue = colorSwatch.Hue;
             double saturation = colorSwatch.Saturation;
             double lightness = colorSwatch.Lightness;
             double lrv = colorSwatch.Lrv;
+            double intensity = colorSwatch.Intensity;
             return
                 hue >= opts.MinHue               && hue <= opts.MaxHue &&
                 saturation >= opts.MinSaturation && saturation <= opts.MaxSaturation &&
                 lightness >= opts.MinLightness   && lightness <= opts.MaxLightness &&
-                lrv >= opts.MinLrv               && lrv <= opts.MaxLrv;
+                lrv >= opts.MinLrv               && lrv <= opts.MaxLrv &&
+                intensity >= opts.MinIntensity   && intensity <= opts.MaxIntensity;
         }
 
         private static void PrintFilteredColors(ColorFilter colorFilter, ColorSwatch[] colorSwatches) {

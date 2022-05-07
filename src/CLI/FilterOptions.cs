@@ -25,5 +25,9 @@ namespace Painter.CLI {
         public double MinLrv { get; set; }
         [Option("max-lrv", Required = false, Default = 100.0, HelpText = "Max LRV value")]
         public double MaxLrv { get; set; }
+        [Option("min-intensity", Required = false, Default = 0.0, HelpText = "Min intensity value")]
+        public double MinIntensity { get; set; }
+        [Option("max-intensity", Required = false, Default = double.MaxValue, HelpText = "Max intensity value")]
+        public double MaxIntensity { get; set; }
     }
 }

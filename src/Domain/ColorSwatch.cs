@@ -15,9 +15,14 @@ namespace Painter.Domain {
         public double Saturation { get; set; }
         public double Lightness { get; set; }
         public double Lrv { get; set; }
+        public double Intensity {
+            get {
+                return Lrv / Saturation;
+            }
+        }
 
         public override string ToString() {
-            return Hue.ToString("0.00").PadLeft(6) + ", " + Saturation.ToString("0.0000") + ", " + Lightness.ToString("0.0000") + ", " + Lrv.ToString("0.00") + " [" + ColorTranslator.ToHtml(Color.FromArgb(Red, Green, Blue)) + "]: " + Name + " (" + Brand.GetDescription() + " " + string.Join(", ", ColorNumbers.Select(x => x.Number)) + ")";
+            return Hue.ToString("0.00").PadLeft(6) + ", " + Saturation.ToString("0.0000") + ", " + Lightness.ToString("0.0000") + ", " + Lrv.ToString("0.00") + ", " + Intensity.ToString("0.00") + " [" + ColorTranslator.ToHtml(Color.FromArgb(Red, Green, Blue)) + "]: " + Name + " (" + Brand.GetDescription() + " " + string.Join(", ", ColorNumbers.Select(x => x.Number)) + ")";
         }
     }
 }
