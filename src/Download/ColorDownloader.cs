@@ -19,14 +19,14 @@ namespace Painter.Download {
                 // Limit parallel downloads to not overwhelm a service and cause throttling
                 new ParallelOptions {MaxDegreeOfParallelism = 4},
                 url => {
-                    colorSwatches.Add(action(_client.GetStringAsync(url).Result));
+                    colorSwatches.Add(action(_client.GetStringAsync(url).GetAwaiter().GetResult()));
                 }
             );
             return colorSwatches;
         }
 
         public IEnumerable<ColorSwatch> DownloadColors(string url, Func<string, IEnumerable<ColorSwatch>> action) {
-            return action(_client.GetStringAsync(url).Result);
+            return action(_client.GetStringAsync(url).GetAwaiter().GetResult());
         }
 
         public void Dispose() {
