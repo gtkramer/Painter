@@ -3,15 +3,30 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Net;
+using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Painter.Domain;
 
 namespace Painter.Download {
-    public static class SherwinWilliams {
-        public static string Url = "https://prism-api.sherwin-williams.com/v1/colors/sherwin?lng=en-US&_corev=2.0.5";
+    public class SherwinWilliamsClient : ColorClient
+    {
+        public SherwinWilliamsClient(HttpClient httpClient) : base(httpClient)
+        {
+        }
 
-        public static IEnumerable<ColorSwatch> GetColorSwatches(string json) {
+        public override IEnumerable<string> GetUrls() {
+            return new List<string>{"https://prism-api.sherwin-williams.com/v1/colors/sherwin?lng=en-US&_corev=2.0.5"};
+        }
+
+        public override IEnumerable<ColorSwatch> DownloadColors(string url)
+        {
+            Task<string> contents = ResilientDownloadAsync(url);
+            contents.Wait();
+            return GetColorSwatches(contents.Result);
+        }
+
+        private IEnumerable<ColorSwatch> GetColorSwatches(string json) {
             ConcurrentBag<ColorSwatch> colorSwatches = new ConcurrentBag<ColorSwatch>();
             IEnumerable<JsonElement> colorElements = JsonDocument.Parse(json).RootElement.EnumerateArray().GetEnumerator();
             Parallel.ForEach(colorElements, colorElement => {
@@ -22,7 +37,7 @@ namespace Painter.Download {
             return colorSwatches;
         }
 
-        private static ColorSwatch GetColorSwatchFromJson(JsonElement json) {
+        private ColorSwatch GetColorSwatchFromJson(JsonElement json) {
             string name = WebUtility.HtmlDecode(json.GetProperty("name").GetString());
             string number = json.GetProperty("brandKey").GetString() + " " + json.GetProperty("colorNumber").GetString();
             Color color = ColorTranslator.FromHtml(json.GetProperty("hex").GetString());

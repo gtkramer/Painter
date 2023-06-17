@@ -1,17 +1,27 @@
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text.Json;
+using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 using Painter.Domain;
 
 namespace Painter.Download {
-    public static class BenjaminMoore {
-        public static IEnumerable<string> GetUrls() {
-            List<string[]> collections = new List<string[]>{
+    public class BenjaminMooreClient : ColorClient
+    {
+        public BenjaminMooreClient(HttpClient httpClient) : base(httpClient)
+        {
+        }
+
+        public override IEnumerable<string> GetUrls() {
+            List<string[]> collections = new()
+            {
                 GetHistoricalColorCodes(),
                 GetAffinityColorCodes(),
                 GetAuraColorCodes(),
@@ -27,14 +37,13 @@ namespace Painter.Download {
             foreach (string[] collection in collections) {
                 numCodes += collection.Length;
             }
-            List<string> urls = new List<string>(numCodes);
+            List<string> urls = new(numCodes);
 
             foreach (string[] collection in collections) {
                 foreach (string code in collection) {
                     urls.Add("https://www.benjaminmoore.com/en-us/paint-colors/color/" + code);
                 }
             }
-
             return urls;
         }
 
@@ -71,7 +80,7 @@ namespace Painter.Download {
         }
 
         private static string[] GetPreviewColorCodes() {
-            List<string> codes = new List<string>(1232);
+            List<string> codes = new(1232);
             for (int i = 0; i != 176; i++) {
                 for (int j = 0; j != 7; j++) {
                     codes.Add((2000 + i) + "-" + ((j + 1) * 10));
@@ -86,7 +95,7 @@ namespace Painter.Download {
                 int value = i + 1;
                 int numZeros = 3 - value.ToString().Length;
                 if (numZeros > 0) {
-                    string padding = new string('0', numZeros);
+                    string padding = new('0', numZeros);
                     codes[i] = padding + value;
                 }
                 else {
@@ -113,7 +122,7 @@ namespace Painter.Download {
         }
 
         private static string[] GetDesignerColorCodes() {
-            List<string> codes = new List<string>(231);
+            List<string> codes = new(231);
             for (int i = 0; i != 33; i++) {
                 int rangeStart = i * 30;
                 codes.Add("cc-" + (rangeStart + 2));
@@ -127,12 +136,36 @@ namespace Painter.Download {
             return codes.ToArray();
         }
 
-        private static ColorSwatch GetColorSwatchFromJson(JsonElement json) {
+        public override IEnumerable<ColorSwatch> DownloadColors(string url)
+        {
+            Task<string> contents = ResilientDownloadAsync(url);
+            contents.Wait();
+            return new List<ColorSwatch>{GetColorSwatch(contents.Result)};
+        }
+
+        private ColorSwatch GetColorSwatch(string html) {
+            HtmlParser htmlParser = new();
+            IHtmlDocument htmlDocument = htmlParser.ParseDocument(html);
+            IElement htmlElement = htmlDocument.QuerySelector("script#__NEXT_DATA__[type=\"application/json\"]");
+            JsonDocument jsonDocument = JsonDocument.Parse(htmlElement.TextContent);
+            JsonElement jsonElement = jsonDocument.RootElement
+                .GetProperty("props")
+                .GetProperty("pageProps")
+                .GetProperty("componentData")
+                .GetProperty("components").EnumerateArray().GetEnumerator().First()
+                .GetProperty("color_data")
+                .GetProperty("props")
+                .GetProperty("color");
+            return GetColorSwatchFromJson(jsonElement);
+        }
+
+        private ColorSwatch GetColorSwatchFromJson(JsonElement json) {
             string name = WebUtility.HtmlDecode(json.GetProperty("name").GetString());
             string number = json.GetProperty("number").GetString();
             Color color = ColorTranslator.FromHtml("#" + json.GetProperty("hex").GetString());
             double lrv = json.GetProperty("lrv").GetDouble();
-            return new ColorSwatch{
+            ColorSwatch colorSwatch = new()
+            {
                 Name = name,
                 ColorNumbers = new List<ColorNumber>{
                     new ColorNumber{Number = number}
@@ -146,21 +179,8 @@ namespace Painter.Download {
                 Lightness = color.GetBrightness(),
                 Lrv = lrv
             };
-        }
-        public static ColorSwatch GetColorSwatch(string html) {
-            HtmlParser htmlParser = new HtmlParser();
-            IHtmlDocument htmlDocument = htmlParser.ParseDocument(html);
-            IElement htmlElement = htmlDocument.QuerySelector("script#__NEXT_DATA__[type=\"application/json\"]");
-            JsonDocument jsonDocument = JsonDocument.Parse(htmlElement.TextContent);
-            JsonElement jsonElement = jsonDocument.RootElement
-                .GetProperty("props")
-                .GetProperty("pageProps")
-                .GetProperty("componentData")
-                .GetProperty("components").EnumerateArray().GetEnumerator().First()
-                .GetProperty("color_data")
-                .GetProperty("props")
-                .GetProperty("color");
-            return GetColorSwatchFromJson(jsonElement);
+            Console.WriteLine("Downloaded " + name);
+            return colorSwatch;
         }
     }
 }
