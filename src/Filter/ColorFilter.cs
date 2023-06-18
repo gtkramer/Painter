@@ -6,27 +6,33 @@ using Painter.Domain;
 namespace Painter.Filter {
     public class ColorFilter {
         private string _name;
-        private int _minInclusiveHue;
-        private int _maxExclusiveHue;
-        private Func<ColorSwatch, int, int, bool> _selector;
+        private double _minInclusiveHue;
+        private double _maxExclusiveHue;
 
-        public ColorFilter(string name, int minInclusiveHue, int maxExclusiveHue, Func<ColorSwatch, int, int, bool> selector) {
+        public ColorFilter(string name, double minInclusiveHue, double maxExclusiveHue) {
             _name = name;
             _minInclusiveHue = minInclusiveHue;
             _maxExclusiveHue = maxExclusiveHue;
-            _selector = selector;
         }
 
         public IEnumerable<ColorSwatch> FilterColors(IEnumerable<ColorSwatch> colorSwatches) {
-            return colorSwatches.Where(x => _selector(x, _minInclusiveHue, _maxExclusiveHue));
+            if (_minInclusiveHue > _maxExclusiveHue) {
+                return colorSwatches.Where(x => ColorHueBreakSelector(x, _minInclusiveHue, _maxExclusiveHue));
+            }
+            else if (_minInclusiveHue > _maxExclusiveHue) {
+                return colorSwatches.Where(x => ColorHueContiguousSelector(x, _minInclusiveHue, _maxExclusiveHue));
+            }
+            else {
+                throw new ArgumentException("Hue ranges are equal and do not represent a range");
+            }
         }
 
-        public static bool ColorHueContiguousSelector(ColorSwatch colorSwatch, int minInclusiveHue, int maxExclusiveHue) {
+        private static bool ColorHueContiguousSelector(ColorSwatch colorSwatch, double minInclusiveHue, double maxExclusiveHue) {
             double h = colorSwatch.Hue;
             return h >= minInclusiveHue && h < maxExclusiveHue;
         }
 
-        public static bool ColorHueBreakSelector(ColorSwatch colorSwatch, int minInclusiveHue, int maxExclusiveHue) {
+        private static bool ColorHueBreakSelector(ColorSwatch colorSwatch, double minInclusiveHue, double maxExclusiveHue) {
             double h = colorSwatch.Hue;
             return h >= minInclusiveHue || h < maxExclusiveHue;
         }

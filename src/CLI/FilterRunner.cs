@@ -15,31 +15,32 @@ namespace Painter.CLI {
             List<ColorSwatch> colorSwatches = colorContext.ColorSwatches.Include(s => s.ColorNumbers).ToList();
             List<ColorFilter> colorFilters = GetColorFilters();
             foreach (ColorFilter colorFilter in colorFilters) {
-                ColorSwatch[] filteredColorSwatches = colorFilter.FilterColors(colorSwatches).Where(x => ColorMeetsCriteria(x, opts)).ToArray();
+                ColorSwatch[] filteredColorSwatches = colorFilter.FilterColors(colorSwatches).Where(x => ColorMeetsCriteria(x, opts)).OrderBy(x => x.Hue).ToArray();
                 if (filteredColorSwatches.Length != 0) {
                     PrintFilteredColors(colorFilter, filteredColorSwatches);
                 }
             }
         }
 
+        // http://www.workwithcolor.com/red-color-hue-range-01.htm
         private static List<ColorFilter> GetColorFilters() {
             List<ColorFilter> colorFilters = new List<ColorFilter>();
-            colorFilters.Add(new ColorFilter("Red", 355, 10, ColorFilter.ColorHueBreakSelector));
-            colorFilters.Add(new ColorFilter("Red-Orange", 10, 20, ColorFilter.ColorHueContiguousSelector));
-            colorFilters.Add(new ColorFilter("Orange-Brown", 20, 40, ColorFilter.ColorHueContiguousSelector));
-            colorFilters.Add(new ColorFilter("Orange-Yellow", 40, 50, ColorFilter.ColorHueContiguousSelector));
-            colorFilters.Add(new ColorFilter("Yellow", 50, 60, ColorFilter.ColorHueContiguousSelector));
-            colorFilters.Add(new ColorFilter("Yellow-Green", 60, 80, ColorFilter.ColorHueContiguousSelector));
-            colorFilters.Add(new ColorFilter("Green", 80, 140, ColorFilter.ColorHueContiguousSelector));
-            colorFilters.Add(new ColorFilter("Green-Cyan", 140, 170, ColorFilter.ColorHueContiguousSelector));
-            colorFilters.Add(new ColorFilter("Cyan", 170, 200, ColorFilter.ColorHueContiguousSelector));
-            colorFilters.Add(new ColorFilter("Cyan-Blue", 200, 220, ColorFilter.ColorHueContiguousSelector));
-            colorFilters.Add(new ColorFilter("Blue", 220, 240, ColorFilter.ColorHueContiguousSelector));
-            colorFilters.Add(new ColorFilter("Blue-Magenta", 240, 280, ColorFilter.ColorHueContiguousSelector));
-            colorFilters.Add(new ColorFilter("Magenta", 280, 320, ColorFilter.ColorHueContiguousSelector));
-            colorFilters.Add(new ColorFilter("Magenta-Pink", 320, 330, ColorFilter.ColorHueContiguousSelector));
-            colorFilters.Add(new ColorFilter("Pink", 330, 345, ColorFilter.ColorHueContiguousSelector));
-            colorFilters.Add(new ColorFilter("Pink-Red", 345, 355, ColorFilter.ColorHueContiguousSelector));
+            colorFilters.Add(new ColorFilter("Red", 355, 10));
+            colorFilters.Add(new ColorFilter("Red-Orange", 10, 20));
+            colorFilters.Add(new ColorFilter("Orange-Brown", 20, 40));
+            colorFilters.Add(new ColorFilter("Orange-Yellow", 40, 50));
+            colorFilters.Add(new ColorFilter("Yellow", 50, 60));
+            colorFilters.Add(new ColorFilter("Yellow-Green", 60, 80));
+            colorFilters.Add(new ColorFilter("Green", 80, 140));
+            colorFilters.Add(new ColorFilter("Green-Cyan", 140, 170));
+            colorFilters.Add(new ColorFilter("Cyan", 170, 200));
+            colorFilters.Add(new ColorFilter("Cyan-Blue", 200, 220));
+            colorFilters.Add(new ColorFilter("Blue", 220, 240));
+            colorFilters.Add(new ColorFilter("Blue-Magenta", 240, 280));
+            colorFilters.Add(new ColorFilter("Magenta", 280, 320));
+            colorFilters.Add(new ColorFilter("Magenta-Pink", 320, 330));
+            colorFilters.Add(new ColorFilter("Pink", 330, 345));
+            colorFilters.Add(new ColorFilter("Pink-Red", 345, 355));
             return colorFilters;
         }
 
