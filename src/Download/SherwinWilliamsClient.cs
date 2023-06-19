@@ -27,7 +27,7 @@ namespace Painter.Download {
         }
 
         private IEnumerable<ColorSwatch> GetColorSwatches(string json) {
-            ConcurrentBag<ColorSwatch> colorSwatches = new ConcurrentBag<ColorSwatch>();
+            ConcurrentBag<ColorSwatch> colorSwatches = new();
             IEnumerable<JsonElement> colorElements = JsonDocument.Parse(json).RootElement.EnumerateArray().GetEnumerator();
             Parallel.ForEach(colorElements, colorElement => {
                 ColorSwatch colorSwatch = GetColorSwatchFromJson(colorElement);

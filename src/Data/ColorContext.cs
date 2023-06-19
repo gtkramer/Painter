@@ -16,7 +16,7 @@ namespace Painter.Data {
         public bool TryAddNewColorSwatch(ColorSwatch newColorSwatch) {
             bool wasAdded = false;
             IQueryable<ColorSwatch> colorSwatchResults = ColorSwatches.Where(entity => entity.Brand == newColorSwatch.Brand && entity.Name == newColorSwatch.Name);
-            if (colorSwatchResults.Count() == 0) {
+            if (!colorSwatchResults.Any()) {
                 ColorSwatches.Add(newColorSwatch);
                 SaveChanges();
                 wasAdded = true;
@@ -26,7 +26,7 @@ namespace Painter.Data {
                 ColorSwatch existingColorSwatch = colorSwatchResults.First();
                 ColorNumber newColorNumber = newColorSwatch.ColorNumbers[0];
                 IQueryable<ColorNumber> colorNumberResults = ColorNumbers.Where(entity => entity.Number == newColorNumber.Number && entity.ColorSwatchId == existingColorSwatch.Id);
-                if (colorNumberResults.Count() == 0) {
+                if (!colorNumberResults.Any()) {
                     newColorNumber.ColorSwatchId = existingColorSwatch.Id;
                     ColorNumbers.Add(newColorNumber);
                     SaveChanges();

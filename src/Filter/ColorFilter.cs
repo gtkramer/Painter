@@ -5,9 +5,9 @@ using Painter.Domain;
 
 namespace Painter.Filter {
     public class ColorFilter {
-        private string _name;
-        private double _minInclusiveHue;
-        private double _maxExclusiveHue;
+        private readonly string _name;
+        private readonly double _minInclusiveHue;
+        private readonly double _maxExclusiveHue;
 
         public ColorFilter(string name, double minInclusiveHue, double maxExclusiveHue) {
             _name = name;

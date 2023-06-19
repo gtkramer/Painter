@@ -11,7 +11,7 @@ namespace Painter.CLI {
     public class MatchRunner {
         public static void Execute(MatchOptions opts) {
             Color customColor = ColorTranslator.FromHtml("#" + opts.HexCode.Replace("#", ""));
-            using ColorContext colorContext = new ColorContext(opts.DbFile);
+            using ColorContext colorContext = new(opts.DbFile);
             List<ColorSwatch> colorSwatches = colorContext.ColorSwatches.Include(s => s.ColorNumbers).ToList();
             IOrderedEnumerable<ColorMatch> colorMatches = colorSwatches.Select(x => new ColorMatch(customColor, x)).OrderBy(x => x.MatchError);
             foreach (ColorMatch colorMatch in colorMatches.Take(opts.Top)) {
