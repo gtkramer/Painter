@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,19 +31,28 @@ namespace Painter.Download {
             _timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(60));
         }
 
-        protected async Task<string> ResilientDownloadAsync(string url)
+        protected async Task<string?> ResilientDownloadAsync(string url)
         {
             Console.WriteLine($"Downloading {url}");
+            try {
+                HttpResponseMessage response = await _retryPolicy.ExecuteAsync(
+                        async () => await _timeoutPolicy.ExecuteAsync(
+                            async ct => await _httpClient.GetAsync(url, ct), CancellationToken.None
+                ));
 
-            HttpResponseMessage response = await _retryPolicy.ExecuteAsync(
-                    async () => await _timeoutPolicy.ExecuteAsync(
-                        async ct => await _httpClient.GetAsync(url, ct), CancellationToken.None
-            ));
+                if (response.StatusCode != HttpStatusCode.OK) {
+                    throw new HttpRequestException($"Received non-OK status code {response.StatusCode} for {url}");
+                }
 
-            return await response.Content.ReadAsStringAsync();
+                return await response.Content.ReadAsStringAsync();
+            }
+            catch (Exception ex) when (ex is TimeoutRejectedException || ex is HttpRequestException) {
+                Console.Error.WriteLine(ex.Message);
+                return null;
+            }
         }
 
         public abstract IEnumerable<string> GetUrls();
-        public abstract IEnumerable<ColorSwatch> DownloadColors(string url);
+        public abstract void PopulateColors(string url, ConcurrentBag<ColorSwatch> colorSwatches);
     }
 }

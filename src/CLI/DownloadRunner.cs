@@ -5,7 +5,7 @@ using Painter.Domain;
 using Painter.Download;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
-using System.Linq;
+using System.Collections.Concurrent;
 
 namespace Painter.CLI {
     public class DownloadRunner {
@@ -25,13 +25,13 @@ namespace Painter.CLI {
                 colorClients.Add(serviceProvider.GetService<SherwinWilliamsClientFactory>().Create());
             }
 
-            List<Task<IEnumerable<ColorSwatch>>> tasks = new();
+            ConcurrentBag<ColorSwatch> colorSwatches = new();
+            List<Task> tasks = new();
             foreach (IColorClient colorClient in colorClients) {
                 foreach (string url in colorClient.GetUrls()) {
-                    tasks.Add(new Task<IEnumerable<ColorSwatch>>(() => colorClient.DownloadColors(url)));
+                    tasks.Add(new Task(() => colorClient.PopulateColors(url, colorSwatches)));
                 }
             }
-
             Parallel.ForEach(tasks,
                 new ParallelOptions {MaxDegreeOfParallelism = 20},
                 task => {
@@ -39,8 +39,6 @@ namespace Painter.CLI {
                     task.Wait();
                 }
             );
-
-            IEnumerable<ColorSwatch> colorSwatches = tasks.SelectMany(obj => obj.Result).ToList();
 
             SaveColors(colorSwatches, opts.DbFile);
         }

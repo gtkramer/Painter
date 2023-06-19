@@ -19,11 +19,15 @@ namespace Painter.Download {
             return new List<string>{"https://prism-api.sherwin-williams.com/v1/colors/sherwin?lng=en-US&_corev=2.0.5"};
         }
 
-        public override IEnumerable<ColorSwatch> DownloadColors(string url)
+        public override void PopulateColors(string url, ConcurrentBag<ColorSwatch> colorSwatches)
         {
-            Task<string> contents = ResilientDownloadAsync(url);
+            Task<string?> contents = ResilientDownloadAsync(url);
             contents.Wait();
-            return GetColorSwatches(contents.Result);
+            if (contents.Result != null) {
+                foreach (ColorSwatch colorSwatch in GetColorSwatches(contents.Result)) {
+                    colorSwatches.Add(colorSwatch);
+                }
+            }
         }
 
         private IEnumerable<ColorSwatch> GetColorSwatches(string json) {

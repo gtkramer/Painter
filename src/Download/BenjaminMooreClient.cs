@@ -1,5 +1,6 @@
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -136,11 +137,13 @@ namespace Painter.Download {
             return codes.ToArray();
         }
 
-        public override IEnumerable<ColorSwatch> DownloadColors(string url)
+        public override void PopulateColors(string url, ConcurrentBag<ColorSwatch> colorSwatches)
         {
-            Task<string> contents = ResilientDownloadAsync(url);
+            Task<string?> contents = ResilientDownloadAsync(url);
             contents.Wait();
-            return new List<ColorSwatch>{GetColorSwatch(contents.Result)};
+            if (contents.Result != null) {
+                colorSwatches.Add(GetColorSwatch(contents.Result));
+            }
         }
 
         private ColorSwatch GetColorSwatch(string html) {
