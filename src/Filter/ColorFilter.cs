@@ -19,7 +19,7 @@ namespace Painter.Filter {
             if (_minInclusiveHue > _maxExclusiveHue) {
                 return colorSwatches.Where(x => ColorHueBreakSelector(x, _minInclusiveHue, _maxExclusiveHue));
             }
-            else if (_minInclusiveHue > _maxExclusiveHue) {
+            else if (_minInclusiveHue < _maxExclusiveHue) {
                 return colorSwatches.Where(x => ColorHueContiguousSelector(x, _minInclusiveHue, _maxExclusiveHue));
             }
             else {
